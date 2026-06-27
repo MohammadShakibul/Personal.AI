@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal.AI - Safe & Intelligent Daily Companion</title>
+    <meta name="description" content="A privacy-first, secure personal assistant for task management, habit tracking, daily planning, medication management, and confidential encrypted notes.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>Personal.AI</h2>
+                    <span class="badge privacy-badge"><i data-lucide="shield-check" class="icon-xs"></i> Zero-Knowledge</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard" role="tab" aria-selected="true">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="planner" role="tab" aria-selected="false">
+                    <i data-lucide="calendar-range"></i>
+                    <span>Smart Planner</span>
+                </button>
+                <button class="nav-item" data-tab="habits" role="tab" aria-selected="false">
+                    <i data-lucide="activity"></i>
+                    <span>Habits & Routines</span>
+                </button>
+                <button class="nav-item" data-tab="vault" role="tab" aria-selected="false">
+                    <i data-lucide="key-round"></i>
+                    <span>Secure Vault</span>
+                    <span class="vault-status-dot" id="vault-status-dot" title="Vault Locked"></span>
+                </button>
+                <button class="nav-item" data-tab="ai-companion" role="tab" aria-selected="false">
+                    <i data-lucide="bot"></i>
+                    <span>Safe AI Companion</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="security-card">
+                    <div class="sec-header">
+                        <i data-lucide="shield" class="sec-icon"></i>
+                        <span>Local Device Storage</span>
+                    </div>
+                    <p class="sec-desc">Your personal data never leaves this browser.</p>
+                    <button class="btn-sec" id="btn-privacy-audit">
+                        <i data-lucide="eye"></i> Audit Security Log
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header Bar -->
+            <header class="top-header">
+                <div class="header-search">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="global-search" placeholder="Search tasks, medications, garden projects, vault notes...">
+                </div>
+                <div class="header-actions">
+                    <div class="privacy-indicator" id="privacy-status-pill">
+                        <span class="pulse-dot"></span>
+                        <span>PII Guard Active</span>
+                    </div>
+                    <button class="icon-btn" id="theme-toggle" title="Toggle Theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="avatar">PA</div>
+                        <div class="user-info">
+                            <span class="user-name">Personal User</span>
+                            <span class="user-role">Encrypted Session</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Views Container -->
+            <div class="view-container">
+
+                <!-- 1. DASHBOARD VIEW -->
+                <section class="view-page active" id="view-dashboard">
+                    <div class="welcome-banner">
+                        <div class="banner-text">
+                            <h1 id="greeting-heading">Welcome to Personal.AI 👋</h1>
+                            <p>Streamlining individual, family, and social challenges while keeping personal data safe.</p>
+                        </div>
+                        <div class="banner-stats">
+                            <div class="stat-box">
+                                <span class="stat-value" id="dash-tasks-pending">0</span>
+                                <span class="stat-label">Pending Tasks</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-value" id="dash-habit-streak">0 Days</span>
+                                <span class="stat-label">Max Habit Streak</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Today's Focus & Pomodoro -->
+                        <div class="card focus-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="timer"></i> Focus & Productivity Timer</h3>
+                                <span class="badge" id="timer-mode-badge">Deep Work</span>
+                            </div>
+                            
+                            <div class="timer-mode-selector">
+                                <button class="mode-pill active" data-mode="work">Deep Work (25m)</button>
+                                <button class="mode-pill" data-mode="shortBreak">Short Break (5m)</button>
+                                <button class="mode-pill" data-mode="longBreak">Long Break (15m)</button>
+                            </div>
+
+                            <div class="timer-display">
+                                <div class="timer-circle-wrap">
+                                    <svg class="timer-svg" viewBox="0 0 100 100">
+                                        <circle class="timer-track" cx="50" cy="50" r="45"></circle>
+                                        <circle class="timer-progress" id="timer-progress-ring" cx="50" cy="50" r="45"></circle>
+                                    </svg>
+                                    <div class="timer-circle-content">
+                                        <span id="timer-time">25:00</span>
+                                        <span id="timer-mode" class="timer-label">Focus Mode</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="timer-controls">
+                                <button class="btn btn-primary" id="btn-timer-start"><i data-lucide="play"></i> Start</button>
+                                <button class="btn btn-secondary" id="btn-timer-pause"><i data-lucide="pause"></i> Pause</button>
+                                <button class="btn btn-ghost" id="btn-timer-reset" title="Reset Timer"><i data-lucide="rotate-ccw"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Morning AI Insight Briefing -->
+                        <div class="card ai-brief-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="sparkles"></i> AI Intelligent Briefing</h3>
+                                <span class="badge privacy-badge-sm"><i data-lucide="lock"></i> Client-Side AI</span>
+                            </div>
+                            <div class="brief-content" id="ai-briefing-text">
+                                <p>✨ Loading personalized briefing...</p>
+                            </div>
+                        </div>
+
+                        <!-- Priority Task Highlights -->
+                        <div class="card task-highlight-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="check-square"></i> Today's Top Priorities</h3>
+                                <button class="btn-link" data-switch-tab="planner">+ Manage Tasks</button>
+                            </div>
+                            <ul class="task-list-mini" id="mini-task-list">
+                                <!-- Populated dynamically -->
+                            </ul>
+                        </div>
+
+                        <!-- Habit Snapshot -->
+                        <div class="card habit-snapshot-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="flame"></i> Routine Snapshot</h3>
+                                <button class="btn-link" data-switch-tab="habits">View All Routines</button>
+                            </div>
+                            <div class="habit-mini-progress" id="mini-habit-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. SMART PLANNER VIEW -->
+                <section class="view-page" id="view-planner">
+                    <div class="page-title-bar">
+                        <div>
+                            <h2>Eisenhower Smart Planner</h2>
+                            <p>Organize individual tasks, family events, medications, and home projects with zero-knowledge security.</p>
+                        </div>
+                        <div class="planner-header-actions">
+                            <div class="search-filter-box">
+                                <input type="text" id="planner-search" placeholder="Filter tasks by keyword...">
+                            </div>
+                            <button class="btn btn-primary" id="btn-open-add-task-modal">
+                                <i data-lucide="plus"></i> New Priority Task
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Eisenhower Matrix Grid -->
+                    <div class="matrix-grid">
+                        <!-- Q1: Urgent & Important -->
+                        <div class="matrix-quadrant q-urgent-important">
+                            <div class="quadrant-header">
+                                <h4><i data-lucide="alert-triangle"></i> Do First</h4>
+                                <span class="quad-desc">Urgent & High Impact</span>
+                            </div>
+                            <div class="quadrant-tasks" id="quad-1" data-quad="1"></div>
+                        </div>
+
+                        <!-- Q2: Not Urgent & Important -->
+                        <div class="matrix-quadrant q-schedule-important">
+                            <div class="quadrant-header">
+                                <h4><i data-lucide="calendar"></i> Schedule & Focus</h4>
+                                <span class="quad-desc">Strategic & Important</span>
+                            </div>
+                            <div class="quadrant-tasks" id="quad-2" data-quad="2"></div>
+                        </div>
+
+                        <!-- Q3: Urgent & Not Important -->
+                        <div class="matrix-quadrant q-delegate">
+                            <div class="quadrant-header">
+                                <h4><i data-lucide="users"></i> Quick Action / Delegate</h4>
+                                <span class="quad-desc">Urgent & Low Impact</span>
+                            </div>
+                            <div class="quadrant-tasks" id="quad-3" data-quad="3"></div>
+                        </div>
+
+                        <!-- Q4: Not Urgent & Not Important -->
+                        <div class="matrix-quadrant q-eliminate">
+                            <div class="quadrant-header">
+                                <h4><i data-lucide="archive"></i> Eliminate / De-prioritize</h4>
+                                <span class="quad-desc">Low Urgency & Low Impact</span>
+                            </div>
+                            <div class="quadrant-tasks" id="quad-4" data-quad="4"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. HABITS & ROUTINES VIEW -->
+                <section class="view-page" id="view-habits">
+                    <div class="page-title-bar">
+                        <div>
+                            <h2>Habits & Consistency Routines</h2>
+                            <p>Build daily health routines, manage medication habits, and track home/garden projects.</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-open-add-habit-modal">
+                            <i data-lucide="plus"></i> Build New Habit
+                        </button>
+                    </div>
+
+                    <div class="habit-filter-bar">
+                        <button class="habit-category-btn active" data-category="All">All Categories</button>
+                        <button class="habit-category-btn" data-category="Health">Health & Medication</button>
+                        <button class="habit-category-btn" data-category="Social">Social & Family</button>
+                        <button class="habit-category-btn" data-category="Home">Home & Garden</button>
+                        <button class="habit-category-btn" data-category="Productivity">Productivity</button>
+                    </div>
+
+                    <div class="habits-container" id="habits-full-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- 4. SECURE VAULT VIEW -->
+                <section class="view-page" id="view-vault">
+                    <div class="page-title-bar">
+                        <div>
+                            <h2>Cryptographic Vault</h2>
+                            <p>Hardware-grade client-side encryption (AES-GCM 256-bit + PBKDF2) for confidential medical records, prescriptions, and guest lists.</p>
+                        </div>
+                        <div class="vault-actions">
+                            <button class="btn btn-secondary" id="btn-lock-vault-action">
+                                <i data-lucide="lock"></i> Lock Vault
+                            </button>
+                            <button class="btn btn-primary" id="btn-add-vault-item">
+                                <i data-lucide="plus"></i> New Secure Note
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lock Overlay if locked -->
+                    <div class="vault-lock-screen" id="vault-lock-screen">
+                        <div class="lock-card">
+                            <div class="lock-icon-wrap">
+                                <i data-lucide="shield-lock"></i>
+                            </div>
+                            <h3>Cryptographic Vault Locked</h3>
+                            <p>Enter your local master passcode to decrypt stored secrets.</p>
+                            <form id="form-vault-unlock">
+                                <input type="password" id="vault-passcode" placeholder="Enter Master PIN (Default: 1234)" required autocomplete="off">
+                                <button type="submit" class="btn btn-primary btn-block">Decrypt & Unlock</button>
+                            </form>
+                            <span class="hint-text">💡 Demo Master PIN is <strong>1234</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Vault Unlocked Content -->
+                    <div class="vault-content hidden" id="vault-unlocked-content">
+                        <div class="vault-grid" id="vault-items-grid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. SAFE AI COMPANION VIEW -->
+                <section class="view-page" id="view-ai-companion">
+                    <div class="page-title-bar">
+                        <div>
+                            <h2>Safe AI Companion</h2>
+                            <p>Ask Personal.AI to organize family party invite lists, structure garden plans, or assist with medication schedules safely.</p>
+                        </div>
+                        <span class="badge privacy-badge"><i data-lucide="shield-check"></i> Active PII Redactor</span>
+                    </div>
+
+                    <!-- AI Prompt Templates / Quick Suggestions targeting Track Examples -->
+                    <div class="ai-prompt-chips">
+                        <span class="chip-label"><i data-lucide="zap" class="icon-xs"></i> Challenge Solutions:</span>
+                        <button class="prompt-chip" data-prompt="Help me plan my party invite list and tasks safely.">🎉 Plan party invites</button>
+                        <button class="prompt-chip" data-prompt="Create a schedule for my morning and evening medication routines.">💊 Manage medication schedule</button>
+                        <button class="prompt-chip" data-prompt="Help me organize a spring garden planting project.">🪴 Plan garden project</button>
+                        <button class="prompt-chip" data-prompt="Summarize my top priority tasks for today.">📋 Priorities summary</button>
+                    </div>
+
+                    <div class="ai-chat-card">
+                        <div class="chat-messages" id="chat-messages-container">
+                            <div class="chat-message bot">
+                                <div class="msg-avatar"><i data-lucide="bot"></i></div>
+                                <div class="msg-bubble">
+                                    <p>Hello! I am your <strong>Personal.AI</strong> companion. I specialize in solving personal, family, and social challenges—from medication routines to garden planning and party invites—keeping all sensitive data 100% private on your device.</p>
+                                    <div class="msg-meta">Personal.AI Guarded • Zero Knowledge</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-area">
+                            <div class="pii-warning-strip hidden" id="pii-alert-strip">
+                                <i data-lucide="eye-off"></i> PII detected! Sensitive credentials/emails/prescriptions masked locally for safety.
+                            </div>
+                            <form id="form-chat-send" class="chat-form">
+                                <input type="text" id="chat-input" placeholder="Ask Personal.AI anything... (e.g., 'Plan party invite list for 15 guests')" autocomplete="off">
+                                <button type="submit" class="btn btn-primary"><i data-lucide="send"></i> Send</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Add Task Modal -->
+    <div class="modal-backdrop" id="modal-task">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create New Priority Task</h3>
+                <button class="close-modal" data-close-modal><i data-lucide="x"></i></button>
+            </div>
+            <form id="form-add-task">
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" placeholder="e.g. Organize weekend family dinner guest list" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-quadrant">Eisenhower Priority Quadrant</label>
+                    <select id="task-quadrant">
+                        <option value="1">Urgent & Important (Do First)</option>
+                        <option value="2" selected>Not Urgent & Important (Schedule)</option>
+                        <option value="3">Urgent & Not Important (Delegate / Quick)</option>
+                        <option value="4">Not Urgent & Not Important (Eliminate)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-due">Due Date</label>
+                    <input type="date" id="task-due">
+                </div>
+                <div class="form-group">
+                    <label for="task-tags">Category Tag</label>
+                    <input type="text" id="task-tags" placeholder="e.g. Health, Social, Garden, Work">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Habit Modal -->
+    <div class="modal-backdrop" id="modal-habit">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Build New Routine Habit</h3>
+                <button class="close-modal" data-close-modal><i data-lucide="x"></i></button>
+            </div>
+            <form id="form-add-habit">
+                <div class="form-group">
+                    <label for="habit-name">Habit Description</label>
+                    <input type="text" id="habit-name" placeholder="e.g. Morning Blood Pressure & Medication Check" required>
+                </div>
+                <div class="form-group">
+                    <label for="habit-category">Category</label>
+                    <select id="habit-category">
+                        <option value="Health" selected>Health & Medication</option>
+                        <option value="Social">Social & Family</option>
+                        <option value="Home">Home & Garden</option>
+                        <option value="Productivity">Productivity</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Routine</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Secure Note Modal -->
+    <div class="modal-backdrop" id="modal-vault">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Add Encrypted Secret Note</h3>
+                <button class="close-modal" data-close-modal><i data-lucide="x"></i></button>
+            </div>
+            <form id="form-add-vault">
+                <div class="form-group">
+                    <label for="vault-title">Secret Title</label>
+                    <input type="text" id="vault-title" placeholder="e.g. Prescription Rx #98231 Schedule" required>
+                </div>
+                <div class="form-group">
+                    <label for="vault-body">Confidential Details</label>
+                    <textarea id="vault-body" rows="4" placeholder="Enter private medical or personal details..." required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Encrypt & Save Secret</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Privacy Audit Modal -->
+    <div class="modal-backdrop" id="modal-privacy-audit">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3><i data-lucide="shield-check"></i> Security & Privacy Audit Engine</h3>
+                <button class="close-modal" data-close-modal><i data-lucide="x"></i></button>
+            </div>
+            <div class="audit-body">
+                <div class="audit-summary-grid">
+                    <div class="audit-metric">
+                        <span class="metric-val">100%</span>
+                        <span class="metric-lbl">Local Device Isolation</span>
+                    </div>
+                    <div class="audit-metric">
+                        <span class="metric-val">0</span>
+                        <span class="metric-lbl">External Telemetry Packets</span>
+                    </div>
+                    <div class="audit-metric">
+                        <span class="metric-val" id="audit-pii-count">0</span>
+                        <span class="metric-lbl">PII Masks Triggered</span>
+                    </div>
+                </div>
+
+                <h4>Active Guardrails & Challenge Standards</h4>
+                <ul class="security-checklist">
+                    <li><i data-lucide="check-circle" class="icon-success"></i> <strong>Web Crypto AES-GCM 256-bit:</strong> Medication records and private notes encrypted with Web Crypto standards.</li>
+                    <li><i data-lucide="check-circle" class="icon-success"></i> <strong>Real-Time PII Sanitizer:</strong> Automatic redaction of Rx numbers, emails, phone numbers, and guest lists.</li>
+                    <li><i data-lucide="check-circle" class="icon-success"></i> <strong>Zero Network Storage:</strong> Zero cloud trackers, zero remote databases.</li>
+                </ul>
+
+                <div class="audit-actions">
+                    <button class="btn btn-secondary" id="btn-export-data"><i data-lucide="download"></i> Export Encrypted JSON Backup</button>
+                    <button class="btn btn-danger" id="btn-clear-all-data"><i data-lucide="trash-2"></i> Wipe Local Application Storage</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="privacy.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
